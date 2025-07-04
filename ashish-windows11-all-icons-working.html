@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ashish Windows 11 - All Apps Active</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+    body {
+      background: url('https://wallpapercave.com/wp/wp9628653.jpg') no-repeat center/cover;
+    }
+    #bootScreen {
+      position: fixed; width: 100%; height: 100%;
+      background: black; color: white;
+      display: flex; justify-content: center; align-items: center; flex-direction: column;
+    }
+    #desktop { display: none; }
+    #taskbar {
+      position: fixed; bottom: 0; width: 100%; height: 40px;
+      background: #ffffffaa;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 10px; box-shadow: 0 -1px 5px rgba(0,0,0,0.2);
+    }
+    #startButton { cursor: pointer; font-size: 20px; }
+    #clock { font-size: 14px; }
+    #startMenu {
+      display: none;
+      position: fixed; bottom: 40px; left: 10px;
+      width: 320px; height: 400px;
+      background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      padding: 10px; overflow-y: auto;
+    }
+    .appIcon {
+      width: 70px; margin: 10px; text-align: center;
+      float: left; cursor: pointer;
+    }
+    .appIcon img {
+      width: 48px; height: 48px;
+    }
+    .window {
+      position: absolute; width: 500px; height: 350px;
+      background: white; border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      top: 60px; left: 60px;
+    }
+    .window-header {
+      background: #0078d7; color: white; padding: 8px;
+      display: flex; justify-content: space-between;
+    }
+    .window-body { padding: 10px; height: calc(100% - 32px); overflow: auto; }
+  </style>
+</head>
+<body>
+  <div id="bootScreen">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Microsoft_Windows_logo_%282012–2021%29.svg" style="width:100px;">
+    <p>Booting Ashish Windows 11...</p>
+    <audio autoplay>
+      <source src="https://win11.blueedge.me/sounds/startup.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <div id="desktop"></div>
+
+  <div id="taskbar">
+    <div id="startButton" onclick="toggleStartMenu()">🪟</div>
+    <div id="clock"></div>
+  </div>
+
+  <div id="startMenu"></div>
+
+<script>
+  const apps = [
+    { id: 'notepad', name: 'Notepad', ico: 'https://icons.iconarchive.com/icons/custom-icon-design/flatastic-1/512/notepad-icon.png', content: '<textarea style="width:100%;height:100%;border:none;"></textarea>' },
+    { id: 'calc', name: 'Calculator', ico: 'https://icons.iconarchive.com/icons/graphicloads/100-flat-2/256/calculator-icon.png', content: '<iframe src="https://www.online-calculator.com/simple-calculator/" style="width:100%;height:100%;border:none;"></iframe>' },
+    { id: 'paint', name: 'Paint', ico: 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Paint-icon.png', content: '<canvas id="paintCanvas" width="480" height="300" style="border:1px solid #000"></canvas><script>let c=document.getElementById("paintCanvas"),ctx=c.getContext("2d"),drawing=false;c.onmousedown=()=>drawing=true;c.onmouseup=()=>drawing=false;c.onmousemove=e=>drawing&&ctx.fillRect(e.offsetX,e.offsetY,2,2);<\/script>' },
+    { id: 'media', name: 'Media Player', ico: 'https://icons.iconarchive.com/icons/dtafalonso/android-lollipop/512/Video-player-icon.png', content: '<video controls autoplay style="width:100%;height:100%"><source src="https://www.w3schools.com/html/mov_bbb.mp4"></video>' },
+    { id: 'terminal', name: 'Terminal', ico: 'https://icons.iconarchive.com/icons/papirus-team/papirus-apps/512/utilities-terminal-icon.png', content: '<pre>>> Ashish Terminal\n> help\n> echo Hello World</pre>' },
+    { id: 'browser', name: 'Browser', ico: 'https://icons.iconarchive.com/icons/google/chrome/512/Google-Chrome-icon.png', content: '', url: 'https://www.google.com' }
+  ];
+
+  function toggleStartMenu() {
+    const menu = document.getElementById("startMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
+
+  function openApp(id) {
+    const app = apps.find(a => a.id === id);
+    if (app.url) { window.open(app.url, "_blank"); return; }
+    const win = document.createElement("div");
+    win.className = "window";
+    win.innerHTML = `<div class="window-header">${app.name}<button onclick="this.closest('.window').remove()">X</button></div><div class="window-body">${app.content}</div>`;
+    document.body.appendChild(win);
+  }
+
+  function initSystem() {
+    document.getElementById("bootScreen").style.display = "none";
+    document.getElementById("desktop").style.display = "block";
+    const startMenu = document.getElementById("startMenu");
+    apps.forEach(app => {
+      const icon = document.createElement("div");
+      icon.className = "appIcon";
+      icon.onclick = () => openApp(app.id);
+      icon.innerHTML = `<img src="${app.ico}"><div>${app.name}</div>`;
+      startMenu.appendChild(icon);
+    });
+  }
+
+  setTimeout(initSystem, 3000);
+
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById("clock").textContent = now.toLocaleTimeString();
+  }, 1000);
+</script>
+</body>
+</html>
